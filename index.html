@@ -396,23 +396,51 @@
     .form-input:focus { border-color: var(--gold); }
     .form-note { font-size: .75rem; color: var(--text-muted); margin-top: 1rem; letter-spacing: .05em; }
 
+    /* CTA social row */
+    .cta-social {
+      display: flex; justify-content: center; gap: 1.5rem;
+      margin-top: 2.25rem;
+    }
+    .cta-social a {
+      display: inline-flex; align-items: center; gap: .5rem;
+      color: var(--text-muted);
+      font-size: .78rem; letter-spacing: .08em;
+      text-decoration: none;
+      transition: color .3s;
+    }
+    .cta-social a:hover { color: var(--gold); }
+    .cta-social svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; flex-shrink: 0; }
+
     /* ── FOOTER ── */
     footer {
       background: var(--surface);
       border-top: 1px solid rgba(201,168,76,.12);
       padding: 2.5rem 5vw;
       display: flex; justify-content: space-between; align-items: center;
-      flex-wrap: wrap; gap: 1rem;
+      flex-wrap: wrap; gap: 1.5rem;
     }
     .footer-logo {
       font-family: 'Cormorant Garamond', serif;
       font-size: 1rem; letter-spacing: .18em;
       color: var(--gold); text-transform: uppercase;
     }
-    .footer-links { display: flex; gap: 2rem; }
+    .footer-links { display: flex; gap: 2rem; flex-wrap: wrap; }
     .footer-links a { font-size: .75rem; letter-spacing: .1em; color: var(--text-muted); text-decoration: none; transition: color .3s; }
     .footer-links a:hover { color: var(--gold); }
-    .footer-copy { font-size: .72rem; color: var(--text-muted); }
+
+    .footer-social { display: flex; gap: 1.25rem; }
+    .footer-social a {
+      display: flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px;
+      border: 1px solid rgba(201,168,76,.25);
+      border-radius: 50%;
+      color: var(--text-muted);
+      transition: color .3s, border-color .3s;
+    }
+    .footer-social a:hover { color: var(--gold); border-color: var(--gold); }
+    .footer-social svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+
+    .footer-copy { font-size: .72rem; color: var(--text-muted); width: 100%; text-align: center; padding-top: .5rem; }
 
     /* ── SCROLL REVEAL ── */
     .reveal {
@@ -429,7 +457,8 @@
       .testimonials-grid { grid-template-columns: 1fr; }
       .form-row { flex-direction: column; }
       .stats-row { gap: 2rem; }
-
+      footer { justify-content: center; text-align: center; }
+      .footer-links { justify-content: center; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -718,7 +747,8 @@
         <a href="mailto:hello@yogabydestiny.com" class="btn-primary" style="opacity:1;animation:none;white-space:nowrap">Reserve My Spot</a>
       </div>
       <p class="form-note">No commitment required · First session complimentary · All ages welcome</p>
-        <div class="cta-social">
+
+      <div class="cta-social">
         <a href="https://instagram.com/destiny.of.a.yogi" target="_blank" rel="noopener">
           <svg viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor" stroke="none"/></svg>
           @destiny.of.a.yogi
@@ -741,6 +771,14 @@
     <a href="#benefits">Benefits</a>
     <a href="#cta">Book a Session</a>
   </nav>
+  <div class="footer-social">
+    <a href="https://instagram.com/destiny.of.a.yogi" target="_blank" rel="noopener" aria-label="Instagram">
+      <svg viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor" stroke="none"/></svg>
+    </a>
+    <a href="https://facebook.com/YogaWithAnastasiya" target="_blank" rel="noopener" aria-label="Facebook">
+      <svg viewBox="0 0 24 24"><path d="M16 8h-2.5a2 2 0 0 0-2 2v2H9v3h2.5v7h3v-7H17l.5-3h-3v-1.5a.5.5 0 0 1 .5-.5H17z"/><circle cx="12" cy="12" r="10"/></svg>
+    </a>
+  </div>
   <span class="footer-copy">© 2025 Yoga by Destiny. All rights reserved.</span>
 </footer>
 
