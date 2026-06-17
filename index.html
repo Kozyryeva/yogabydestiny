@@ -384,6 +384,15 @@
     .form-row {
       display: flex; gap: .75rem; max-width: 460px; margin: 0 auto;
     }
+    .form-row button.btn-primary {
+      font-family: 'Lato', sans-serif;
+    }
+    .form-status {
+      font-size: .85rem; margin-top: 1rem; min-height: 1.2em;
+      letter-spacing: .03em;
+    }
+    .form-status.success { color: var(--gold-light); }
+    .form-status.error { color: #c97a6a; }
     .form-input {
       flex: 1; padding: .82rem 1.2rem;
       background: rgba(255,255,255,.04);
@@ -395,6 +404,35 @@
     .form-input::placeholder { color: var(--text-muted); }
     .form-input:focus { border-color: var(--gold); }
     .form-note { font-size: .75rem; color: var(--text-muted); margin-top: 1rem; letter-spacing: .05em; }
+
+    /* Email fallback */
+    .email-fallback {
+      display: inline-flex; align-items: center; gap: .6rem;
+      margin-top: 1.5rem;
+      padding: .55rem 1rem;
+      border: 1px solid rgba(201,168,76,.2);
+      background: rgba(255,255,255,.02);
+      font-size: .82rem; color: var(--text);
+      letter-spacing: .02em;
+    }
+    .email-fallback .fallback-label {
+      color: var(--text-muted); font-size: .72rem;
+    }
+    .email-fallback button {
+      background: none; border: none; cursor: pointer;
+      color: var(--gold); font-family: 'Lato', sans-serif;
+      font-size: .72rem; letter-spacing: .12em; text-transform: uppercase;
+      padding: .3rem .6rem;
+      border: 1px solid var(--gold-dim);
+      transition: background .3s, color .3s, border-color .3s;
+      white-space: nowrap;
+    }
+    .email-fallback button:hover {
+      background: var(--gold); color: var(--black); border-color: var(--gold);
+    }
+    .email-fallback button.copied {
+      background: var(--gold); color: var(--black); border-color: var(--gold);
+    }
 
     /* CTA social row */
     .cta-social {
@@ -456,6 +494,9 @@
       .styles-grid { grid-template-columns: 1fr; }
       .testimonials-grid { grid-template-columns: 1fr; }
       .form-row { flex-direction: column; }
+      .form-row .form-input,
+      .form-row button.btn-primary { width: 100%; }
+      .email-fallback { flex-wrap: wrap; justify-content: center; text-align: center; }
       .stats-row { gap: 2rem; }
       footer { justify-content: center; text-align: center; }
       .footer-links { justify-content: center; }
@@ -742,11 +783,19 @@
       <p class="section-label">Begin Today</p>
       <h2 class="section-title">Your mat is<br><em>waiting for you</em></h2>
       <p>Take the first breath. Join Anastasiya's online studio and discover a practice that supports, challenges, and restores you — at your own pace, from anywhere in the world.</p>
-      <div class="form-row">
-        <input class="form-input" type="email" placeholder="Your email address" aria-label="Email address"/>
-        <a href="mailto:hello@yogabydestiny.com" class="btn-primary" style="opacity:1;animation:none;white-space:nowrap">Reserve My Spot</a>
-      </div>
+      <form class="form-row" id="signup-form" action="https://formspree.io/f/xrevvzap" method="POST">
+        <input class="form-input" type="text" name="name" placeholder="Your name" aria-label="Your name" required />
+        <input class="form-input" type="email" name="email" placeholder="Your email address" aria-label="Email address" required />
+        <button type="submit" class="btn-primary" style="opacity:1;animation:none;white-space:nowrap">Reserve My Spot</button>
+      </form>
+      <p class="form-status" id="form-status" aria-live="polite"></p>
       <p class="form-note">No commitment required · First session complimentary · All ages welcome</p>
+
+      <div class="email-fallback">
+        <span class="fallback-label">Prefer to email directly?</span>
+        <span id="fallback-email">hello@yogabydestiny.com</span>
+        <button type="button" id="copy-email-btn" onclick="copyEmail()">Copy Email</button>
+      </div>
 
       <div class="cta-social">
         <a href="https://instagram.com/destiny.of.a.yogi" target="_blank" rel="noopener">
@@ -783,6 +832,68 @@
 </footer>
 
 <script>
+  // Formspree submission (AJAX, stays on page)
+  const signupForm = document.getElementById('signup-form');
+  const formStatus = document.getElementById('form-status');
+
+  signupForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const submitBtn = signupForm.querySelector('button[type="submit"]');
+    const originalLabel = submitBtn.textContent;
+    submitBtn.textContent = 'Sending…';
+    submitBtn.disabled = true;
+    formStatus.textContent = '';
+    formStatus.className = 'form-status';
+
+    try {
+      const response = await fetch(signupForm.action, {
+        method: 'POST',
+        body: new FormData(signupForm),
+        headers: { Accept: 'application/json' }
+      });
+
+      if (response.ok) {
+        formStatus.textContent = "Thank you — your message has been sent. We'll be in touch soon.";
+        formStatus.classList.add('success');
+        signupForm.reset();
+      } else {
+        formStatus.textContent = "Something went wrong. Please try again, or email us directly below.";
+        formStatus.classList.add('error');
+      }
+    } catch (err) {
+      formStatus.textContent = "Something went wrong. Please try again, or email us directly below.";
+      formStatus.classList.add('error');
+    } finally {
+      submitBtn.textContent = originalLabel;
+      submitBtn.disabled = false;
+    }
+  });
+
+  // Copy email fallback
+  function copyEmail() {
+    const email = document.getElementById('fallback-email').textContent.trim();
+    const btn = document.getElementById('copy-email-btn');
+    const done = () => {
+      const original = btn.textContent;
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = original; btn.classList.remove('copied'); }, 2000);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(email).then(done).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = email; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        done();
+      });
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = email; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      done();
+    }
+  }
+
   // Scroll reveal
   const reveals = document.querySelectorAll('.reveal');
   const io = new IntersectionObserver(entries => {
